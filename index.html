@@ -758,74 +758,116 @@
   addEventListener("keydown", e => { if (e.key === "Escape" && cardModal.classList.contains("show")) closeCard(); });
 })();
   (() => {
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCwsufLX44MqsBZtX9dG1Tw4vL-G0md3_1AMb8M4cao_YY6JEgnpjaoqdEft8C4qcyDQ/exec";
+
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbzCwsufLX44MqsBZtX9dG1Tw4vL-G0md3_1AMb8M4cao_YY6JEgnpjaoqdEft8C4qcyDQ/exec";
+
   const form = document.getElementById("rsvpForm");
+
   if (!form) return;
 
   const status = document.getElementById("formStatus");
   const submitBtn = document.getElementById("submitBtn");
 
-  form.addEventListener("submit", async event => {
+  form.addEventListener("submit", async (event) => {
+
     event.preventDefault();
 
-    const attendance = form.querySelector('input[name="attendance"]:checked');
-    const name = document.getElementById("name").value.trim();
-    const mobile = document.getElementById("mobile").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const adults = Number(document.getElementById("adults").value);
-    const children = Number(document.getElementById("children").value);
+    const attendance =
+      form.querySelector('input[name="attendance"]:checked');
 
-    document.getElementById("e-name").textContent = name ? "" : "Please enter your name.";
-    document.getElementById("e-mobile").textContent = mobile ? "" : "Please enter your mobile number.";
+    const name =
+      document.getElementById("name").value.trim();
+
+    const mobile =
+      document.getElementById("mobile").value.trim();
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const adults =
+      document.getElementById("adults").value;
+
+    const children =
+      document.getElementById("children").value;
+
+    const message =
+      document.getElementById("message").value.trim();
+
+    /* Validation */
+
+    document.getElementById("e-name").textContent =
+      name ? "" : "Please enter your name.";
+
+    document.getElementById("e-mobile").textContent =
+      mobile ? "" : "Please enter your mobile number.";
+
     document.getElementById("e-email").textContent =
-      email && !document.getElementById("email").checkValidity() ? "Please enter a valid email address." : "";
-    document.getElementById("e-attendance").textContent = attendance ? "" : "Please select an attendance response.";
-    document.getElementById("e-counts").textContent =
-      [adults, children].every(n => Number.isInteger(n) && n >= 0 && n <= 30)
-        ? "" : "Adult and child counts must be between 0 and 30.";
+      (email && !document.getElementById("email").checkValidity())
+        ? "Please enter a valid email address."
+        : "";
 
-    if (!name || !mobile || !attendance ||
-        (email && !document.getElementById("email").checkValidity()) ||
-        ![adults, children].every(n => Number.isInteger(n) && n >= 0 && n <= 30)) {
-      status.textContent = "Please correct the highlighted fields.";
+    document.getElementById("e-attendance").textContent =
+      attendance ? "" : "Please select an attendance response.";
+
+    if (
+      !name ||
+      !mobile ||
+      !attendance ||
+      (email &&
+        !document.getElementById("email").checkValidity())
+    ) {
+      status.textContent =
+        "Please correct the highlighted fields.";
       return;
     }
-
-    const formData = {
-      name,
-      mobile,
-      email,
-      attendance: attendance.value,
-      adults,
-      children,
-      message: document.getElementById("message").value.trim()
-    };
 
     submitBtn.disabled = true;
     status.textContent = "Submitting RSVP...";
 
     try {
-      const response = await fetch(SCRIPT_URL, {
+
+      const data = new FormData();
+
+      data.append("name", name);
+      data.append("mobile", mobile);
+      data.append("email", email);
+      data.append("attendance", attendance.value);
+      data.append("adults", adults);
+      data.append("children", children);
+      data.append("message", message);
+
+      await fetch(SCRIPT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        mode: "no-cors",
+        body: data
       });
-      const result = await response.json();
 
-      if (!response.ok || !result.success) {
-        throw new Error("RSVP submission was not accepted.");
-      }
+      status.textContent = "";
 
-      document.getElementById("rsvpFormWrap").hidden = true;
-      document.getElementById("thanks").style.display = "block";
+      document.getElementById("rsvpFormWrap").style.display =
+        "none";
+
+      document.getElementById("thanks").style.display =
+        "block";
+
       document.getElementById("thanks").focus();
+
     } catch (error) {
-      console.error("RSVP submission failed:", error);
-      status.textContent = "Unable to submit RSVP. Please try again.";
+
+      console.error(error);
+
+      status.textContent =
+        "Unable to submit RSVP. Please try again.";
+
     } finally {
+
       submitBtn.disabled = false;
+
     }
+
   });
+
 })();
 </script>
 </body>
