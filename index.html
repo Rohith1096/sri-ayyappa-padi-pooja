@@ -188,7 +188,25 @@
   .btn.wide{grid-column:1 / -1}
   .btn:active{transform:scale(.97)}
   .btn svg{width:18px; height:18px}
-
+  .rsvp-card{max-width:520px;margin:8px auto 0;padding:24px 20px;text-align:left}
+.rsvp-card h2{text-align:center;margin-bottom:16px}
+.rsvp-form{display:grid;gap:14px}
+.rsvp-form label,.rsvp-form legend{display:block;color:var(--gold-2);font-weight:600}
+.rsvp-form input,.rsvp-form textarea{
+  width:100%;margin-top:5px;padding:11px 12px;border-radius:8px;
+  border:1px solid rgba(243,200,107,.4);background:rgba(0,0,0,.35);
+  color:var(--ink);font:inherit
+}
+.rsvp-form input:focus,.rsvp-form textarea:focus{outline:2px solid var(--gold);outline-offset:2px}
+.rsvp-row,.rsvp-counts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rsvp-form fieldset{border:1px solid rgba(243,200,107,.35);border-radius:10px;padding:12px}
+.rsvp-form .rsvp-choice{display:flex;align-items:center;gap:8px;margin-top:8px;color:var(--ink)}
+.rsvp-form .rsvp-choice input{width:auto;margin:0}
+.rsvp-form .rsvp-counts input{max-width:100%}
+.rsvp-error{min-height:1em;color:#ffb4a8;font-size:15px}
+.rsvp-status{color:var(--gold-2);min-height:1.5em}
+#thanks{display:none;text-align:center;color:var(--gold-2);padding:18px}
+@media(max-width:480px){.rsvp-row,.rsvp-counts{grid-template-columns:1fr}}
   .closing{font-style:italic; font-size:21px; color:var(--ink)}
   .mantra{display:inline-block; margin-top:20px; padding:14px 26px; border-radius:12px;
     background:linear-gradient(180deg,#ffeab0,#e3ad4f 55%,#a9751f); color:#3a0c0c;
@@ -348,6 +366,76 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm2 4v2h12V9H6zm0 4v2h8v-2H6z"/></svg>VIEW CARD</button>
     </div>
   </section>
+    <section class="reveal" id="rsvp">
+  <div class="gold-card rsvp-card">
+    <h2 id="rsvp-title">Kindly RSVP</h2>
+
+    <div id="rsvpFormWrap">
+      <form class="rsvp-form" id="rsvpForm" novalidate>
+        <div>
+          <label for="name">Guest Full Name</label>
+          <input id="name" name="name" autocomplete="name" maxlength="80"
+                 required placeholder="e.g. Ramesh Kumar" aria-describedby="e-name">
+          <div class="rsvp-error" id="e-name" aria-live="polite"></div>
+        </div>
+
+        <div class="rsvp-row">
+          <div>
+            <label for="mobile">Mobile Number</label>
+            <input id="mobile" name="mobile" type="tel" inputmode="tel"
+                   autocomplete="tel" maxlength="20" required
+                   placeholder="+1 555 123 4567" aria-describedby="e-mobile">
+            <div class="rsvp-error" id="e-mobile" aria-live="polite"></div>
+            <p class="note">Use the same number later to update your response.</p>
+          </div>
+          <div>
+            <label for="email">Email Address <span class="opt">(optional)</span></label>
+            <input id="email" name="email" type="email" autocomplete="email"
+                   maxlength="100" placeholder="you@example.com" aria-describedby="e-email">
+            <div class="rsvp-error" id="e-email" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend>Will you attend?</legend>
+          <label class="rsvp-choice"><input type="radio" name="attendance" value="Yes" required> 🙏 Yes — Joyfully attending</label>
+          <label class="rsvp-choice"><input type="radio" name="attendance" value="Maybe"> 💛 Maybe — Will try my best</label>
+          <label class="rsvp-choice"><input type="radio" name="attendance" value="No"> 🌺 No — Sending blessings</label>
+          <div class="rsvp-error" id="e-attendance" aria-live="polite"></div>
+        </fieldset>
+
+        <div class="rsvp-counts">
+          <div>
+            <label for="adults">Number of Adults</label>
+            <input id="adults" name="adults" type="number" min="0" max="30" value="1" inputmode="numeric">
+          </div>
+          <div>
+            <label for="children">Number of Children</label>
+            <input id="children" name="children" type="number" min="0" max="30" value="0" inputmode="numeric">
+          </div>
+        </div>
+        <div class="rsvp-error" id="e-counts" aria-live="polite"></div>
+
+        <div>
+          <label for="message">Message to Host <span class="opt">(optional)</span></label>
+          <textarea id="message" name="message" rows="3" maxlength="500"
+                    placeholder="Your wishes or a note for the family..."></textarea>
+        </div>
+
+        <div>
+          <p class="rsvp-status" id="formStatus" role="status" aria-live="polite"></p>
+          <button class="btn" type="submit" id="submitBtn">
+            <span id="submitLbl">Submit RSVP</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="thanks" tabindex="-1" role="status">
+      Thank you for your response. Swamiye Saranam Ayyappa!
+    </div>
+  </div>
+</section>
 
   <section class="reveal">
     <p class="closing">Your gracious presence will make this occasion<br>blessed and memorable.</p>
@@ -668,6 +756,76 @@
   $("#cardClose").addEventListener("click", closeCard);
   cardModal.addEventListener("click", e => { if (e.target === cardModal) closeCard(); });
   addEventListener("keydown", e => { if (e.key === "Escape" && cardModal.classList.contains("show")) closeCard(); });
+})();
+  (() => {
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCwsufLX44MqsBZtX9dG1Tw4vL-G0md3_1AMb8M4cao_YY6JEgnpjaoqdEft8C4qcyDQ/exec";
+  const form = document.getElementById("rsvpForm");
+  if (!form) return;
+
+  const status = document.getElementById("formStatus");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const attendance = form.querySelector('input[name="attendance"]:checked');
+    const name = document.getElementById("name").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const adults = Number(document.getElementById("adults").value);
+    const children = Number(document.getElementById("children").value);
+
+    document.getElementById("e-name").textContent = name ? "" : "Please enter your name.";
+    document.getElementById("e-mobile").textContent = mobile ? "" : "Please enter your mobile number.";
+    document.getElementById("e-email").textContent =
+      email && !document.getElementById("email").checkValidity() ? "Please enter a valid email address." : "";
+    document.getElementById("e-attendance").textContent = attendance ? "" : "Please select an attendance response.";
+    document.getElementById("e-counts").textContent =
+      [adults, children].every(n => Number.isInteger(n) && n >= 0 && n <= 30)
+        ? "" : "Adult and child counts must be between 0 and 30.";
+
+    if (!name || !mobile || !attendance ||
+        (email && !document.getElementById("email").checkValidity()) ||
+        ![adults, children].every(n => Number.isInteger(n) && n >= 0 && n <= 30)) {
+      status.textContent = "Please correct the highlighted fields.";
+      return;
+    }
+
+    const formData = {
+      name,
+      mobile,
+      email,
+      attendance: attendance.value,
+      adults,
+      children,
+      message: document.getElementById("message").value.trim()
+    };
+
+    submitBtn.disabled = true;
+    status.textContent = "Submitting RSVP...";
+
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error("RSVP submission was not accepted.");
+      }
+
+      document.getElementById("rsvpFormWrap").hidden = true;
+      document.getElementById("thanks").style.display = "block";
+      document.getElementById("thanks").focus();
+    } catch (error) {
+      console.error("RSVP submission failed:", error);
+      status.textContent = "Unable to submit RSVP. Please try again.";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
 })();
 </script>
 </body>
