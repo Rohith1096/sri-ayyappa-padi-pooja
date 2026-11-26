@@ -827,21 +827,21 @@
 
     try {
 
-      const data = new FormData();
+      const data = new URLSearchParams({
+  name,
+  mobile,
+  email,
+  attendance: attendance.value,
+  adults,
+  children,
+  message
+});
 
-      data.append("name", name);
-      data.append("mobile", mobile);
-      data.append("email", email);
-      data.append("attendance", attendance.value);
-      data.append("adults", adults);
-      data.append("children", children);
-      data.append("message", message);
-
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        body: data
-      });
+await fetch(SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",
+  body: data
+});
 
       status.textContent = "";
 
